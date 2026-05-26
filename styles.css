@@ -129,15 +129,6 @@ h1 {
 .square.light { background: var(--light-square); }
 .square.dark { background: var(--dark-square); }
 
-.file-label,
-.rank-label {
-  position: absolute;
-  font-size: clamp(10px, 2vw, 15px);
-  opacity: 0.75;
-}
-.file-label { right: 7px; bottom: 4px; }
-.rank-label { left: 6px; top: 4px; }
-
 .target-dot {
   width: 34%;
   aspect-ratio: 1;

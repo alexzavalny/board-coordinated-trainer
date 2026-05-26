@@ -1,12 +1,30 @@
 import { ALL_CELLS, FILES, RANKS, applyAnswer, createGameState, startGame, updateClock } from './game.js';
 
-const boardEl = document.querySelector('#board');
-const timerEl = document.querySelector('#timer');
-const scoreEl = document.querySelector('#score');
-const typedEl = document.querySelector('#typed');
-const messageEl = document.querySelector('#message');
-const startButton = document.querySelector('#startButton');
-const answerInput = document.querySelector('#answerInput');
+export function shouldShowBoardCoordinateLabels() {
+  return false;
+}
+
+export function createSquareElement(documentRef, file, rank) {
+  const coord = `${file}${rank}`;
+  const square = documentRef.createElement('div');
+  square.className = `square ${(FILES.indexOf(file) + RANKS.indexOf(rank)) % 2 === 0 ? 'dark' : 'light'}`;
+  square.dataset.coord = coord;
+  square.setAttribute('aria-label', coord);
+
+  const dot = documentRef.createElement('span');
+  dot.className = 'target-dot';
+  square.append(dot);
+  return square;
+}
+
+const isBrowser = typeof document !== 'undefined';
+const boardEl = isBrowser ? document.querySelector('#board') : null;
+const timerEl = isBrowser ? document.querySelector('#timer') : null;
+const scoreEl = isBrowser ? document.querySelector('#score') : null;
+const typedEl = isBrowser ? document.querySelector('#typed') : null;
+const messageEl = isBrowser ? document.querySelector('#message') : null;
+const startButton = isBrowser ? document.querySelector('#startButton') : null;
+const answerInput = isBrowser ? document.querySelector('#answerInput') : null;
 
 let state = createGameState({ durationSeconds: 30, cells: ALL_CELLS });
 let timerId = null;
@@ -15,25 +33,7 @@ function buildBoard() {
   boardEl.innerHTML = '';
   [...RANKS].reverse().forEach(rank => {
     FILES.forEach(file => {
-      const coord = `${file}${rank}`;
-      const square = document.createElement('div');
-      square.className = `square ${(FILES.indexOf(file) + RANKS.indexOf(rank)) % 2 === 0 ? 'dark' : 'light'}`;
-      square.dataset.coord = coord;
-      square.setAttribute('aria-label', coord);
-
-      const fileLabel = document.createElement('span');
-      fileLabel.className = 'file-label';
-      fileLabel.textContent = rank === '1' ? file : '';
-
-      const rankLabel = document.createElement('span');
-      rankLabel.className = 'rank-label';
-      rankLabel.textContent = file === 'a' ? rank : '';
-
-      const dot = document.createElement('span');
-      dot.className = 'target-dot';
-
-      square.append(rankLabel, fileLabel, dot);
-      boardEl.append(square);
+      boardEl.append(createSquareElement(document, file, rank));
     });
   });
 }
@@ -83,16 +83,18 @@ function begin() {
   render();
 }
 
-startButton.addEventListener('click', begin);
-answerInput.addEventListener('input', () => {
-  state = applyAnswer(state, answerInput.value);
-  answerInput.value = state.typed;
+if (isBrowser) {
+  startButton.addEventListener('click', begin);
+  answerInput.addEventListener('input', () => {
+    state = applyAnswer(state, answerInput.value);
+    answerInput.value = state.typed;
+    render();
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && !state.running) begin();
+  });
+
+  buildBoard();
   render();
-});
-
-document.addEventListener('keydown', event => {
-  if (event.key === 'Enter' && !state.running) begin();
-});
-
-buildBoard();
-render();
+}
