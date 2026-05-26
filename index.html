@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Board Coordinates Trainer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <p class="eyebrow">Chess trainer</p>
+      <h1>Тренажёр координат доски</h1>
+      <p class="lead">За 30 секунд набери как можно больше координат подсвеченных клеток.</p>
+    </section>
+
+    <section class="game-panel" aria-label="Тренажёр">
+      <div class="stats" aria-live="polite">
+        <div class="stat">
+          <span class="stat-label">Время</span>
+          <strong id="timer">30</strong>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Очки</span>
+          <strong id="score">0</strong>
+        </div>
+        <div class="stat wide">
+          <span class="stat-label">Ввод</span>
+          <strong id="typed" class="typed">—</strong>
+        </div>
+      </div>
+
+      <div class="board-wrap">
+        <div id="board" class="board" aria-label="Шахматная доска"></div>
+      </div>
+
+      <div id="message" class="message">Нажми «Старт», затем печатай координату клетки: например, e4.</div>
+
+      <div class="controls">
+        <button id="startButton" type="button">Старт</button>
+        <input id="answerInput" type="text" inputmode="text" autocomplete="off" spellcheck="false" maxlength="2" aria-label="Введите координату" placeholder="e4" disabled />
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
