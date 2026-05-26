@@ -18,7 +18,7 @@ assert.equal(wrong.feedback, 'wrong');
 assert.equal(wrong.currentTarget, 'a1');
 assert.equal(wrong.typed, 'b2');
 
-let right = applyAnswer(state, 'a1', 1500);
+let right = applyAnswer(state, 'a1', 1500, () => 0.34);
 assert.equal(right.score, 1);
 assert.equal(right.feedback, 'correct');
 assert.equal(right.currentTarget, 'b2');
