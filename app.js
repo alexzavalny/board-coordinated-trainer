@@ -28,7 +28,7 @@ const startButton = isBrowser ? document.querySelector('#startButton') : null;
 const answerInput = isBrowser ? document.querySelector('#answerInput') : null;
 const colorButtons = isBrowser ? document.querySelectorAll('.color-btn') : null;
 
-let state = createGameState({ durationSeconds: 30, cells: ALL_CELLS });
+let state = createGameState({ durationSeconds: 60, cells: ALL_CELLS });
 let timerId = null;
 let orientationSetting = 'white'; // 'white' | 'black' | 'random'
 
@@ -104,7 +104,7 @@ function tick() {
 function begin() {
   const orientation = resolveOrientation();
   buildBoard(orientation);
-  state = startGame(createGameState({ durationSeconds: 30, cells: ALL_CELLS }), Date.now());
+  state = startGame(createGameState({ durationSeconds: 60, cells: ALL_CELLS }), Date.now());
   state = { ...state, orientation };
   answerInput.value = '';
   answerInput.disabled = false;
@@ -139,6 +139,14 @@ if (isBrowser) {
   answerInput.addEventListener('input', () => {
     state = applyAnswer(state, answerInput.value);
     answerInput.value = state.typed;
+
+    // Random mode: переворачиваем доску после каждого правильного ответа
+    if (state.feedback === 'correct' && orientationSetting === 'random') {
+      const newOrient = resolveOrientation();
+      buildBoard(newOrient);
+      state = { ...state, orientation: newOrient };
+    }
+
     render();
   });
 
