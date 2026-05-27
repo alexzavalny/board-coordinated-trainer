@@ -1,5 +1,85 @@
 import { ALL_CELLS, FILES, RANKS, applyAnswer, createGameState, startGame, updateClock } from './game.js';
 
+/* ── i18n ── */
+const i18n = {
+  en: {
+    pageTitle: 'Board Coordinates Trainer',
+    eyebrow: 'Chess trainer',
+    title: 'Board Coordinates Trainer',
+    lead: 'Score as many coordinates as you can in one minute.',
+    statTime: 'Time',
+    statScore: 'Score',
+    statInput: 'Input',
+    colorLabel: 'Color:',
+    colorWhite: 'White',
+    colorBlack: 'Black',
+    colorRandom: 'Random',
+    startBtn: 'Start',
+    playingBtn: 'Playing…',
+    againBtn: 'Play again',
+    msgReady: 'Press «Start», then type the coordinate of the highlighted square.',
+    msgWrong: 'Wrong square — try again.',
+    msgTargeting: 'Type the coordinate of the highlighted square.',
+    modalTitle: "Time's up!",
+    modalMode: 'Mode',
+    modalScore: 'Score',
+    modeWhite: 'As White',
+    modeBlack: 'As Black',
+  },
+  ru: {
+    pageTitle: 'Тренажёр координат доски',
+    eyebrow: 'Chess trainer',
+    title: 'Тренажёр координат доски',
+    lead: 'За минуту набери как можно больше координат подсвеченных клеток.',
+    statTime: 'Время',
+    statScore: 'Очки',
+    statInput: 'Ввод',
+    colorLabel: 'Цвет:',
+    colorWhite: 'Белые',
+    colorBlack: 'Чёрные',
+    colorRandom: 'Рандом',
+    startBtn: 'Старт',
+    playingBtn: 'Идёт игра…',
+    againBtn: 'Ещё раз',
+    msgReady: 'Нажми «Старт», затем печатай координату подсвеченной клетки.',
+    msgWrong: 'Не та клетка — попробуй ещё.',
+    msgTargeting: 'Печатай координату подсвеченной клетки.',
+    modalTitle: 'Время вышло!',
+    modalMode: 'Режим',
+    modalScore: 'Очки',
+    modeWhite: 'За белых',
+    modeBlack: 'За чёрных',
+  },
+};
+
+let lang = 'en';
+
+function applyLanguage() {
+  const dict = i18n[lang];
+  if (!dict) return;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (dict[key] !== undefined) {
+      if (el.placeholder !== undefined) {
+        el.placeholder = dict[key];
+      } else {
+        el.textContent = dict[key];
+      }
+    }
+  });
+  // Update lang switch buttons
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+  // Update html lang attribute
+  document.documentElement.lang = lang;
+}
+
+function t(key) {
+  return i18n[lang]?.[key] ?? key;
+}
+
+/* ── Board ── */
 export function shouldShowBoardCoordinateLabels() {
   return false;
 }
@@ -27,6 +107,7 @@ const messageEl = isBrowser ? document.querySelector('#message') : null;
 const startButton = isBrowser ? document.querySelector('#startButton') : null;
 const answerInput = isBrowser ? document.querySelector('#answerInput') : null;
 const colorButtons = isBrowser ? document.querySelectorAll('.color-btn') : null;
+const langButtons = isBrowser ? document.querySelectorAll('.lang-btn') : null;
 const modalEl = isBrowser ? document.querySelector('#resultModal') : null;
 const modalIcon = isBrowser ? document.querySelector('#modalIcon') : null;
 const modalMode = isBrowser ? document.querySelector('#modalMode') : null;
@@ -46,8 +127,8 @@ function resolveOrientation() {
 
 function buildBoard(orientation) {
   boardEl.innerHTML = '';
-  const ranks = orientation === 'white' ? [...RANKS].reverse() : RANKS;       // white: 8→1, black: 1→8
-  const files = orientation === 'white' ? FILES : [...FILES].reverse();       // white: a→h, black: h→a
+  const ranks = orientation === 'white' ? [...RANKS].reverse() : RANKS;
+  const files = orientation === 'white' ? FILES : [...FILES].reverse();
   ranks.forEach(rank => {
     files.forEach(file => {
       boardEl.append(createSquareElement(document, file, rank));
@@ -56,7 +137,7 @@ function buildBoard(orientation) {
   boardEl.dataset.orientation = orientation;
   if (boardWrap) boardWrap.dataset.orientation = orientation;
 
-  // Ставим королей на законные места
+  // Place kings on their squares
   const placeKing = (coord, src) => {
     const sq = boardEl.querySelector(`[data-coord="${coord}"]`);
     if (!sq) return;
@@ -85,10 +166,9 @@ function render() {
   });
 
   if (!state.running && state.startedAt) {
-    // Показываем модалку с результатом
     const isBlack = state.orientation === 'black';
     if (modalIcon) modalIcon.textContent = isBlack ? '♚' : '♔';
-    if (modalMode) modalMode.textContent = isBlack ? 'За чёрных' : 'За белых';
+    if (modalMode) modalMode.textContent = isBlack ? t('modeBlack') : t('modeWhite');
     if (modalScore) modalScore.textContent = state.score;
     if (modalEl) {
       modalEl.classList.remove('hidden');
@@ -97,11 +177,9 @@ function render() {
     messageEl.textContent = '';
     answerInput.disabled = true;
     startButton.disabled = false;
-    startButton.textContent = 'Ещё раз';
+    startButton.textContent = t('againBtn');
   } else if (state.running) {
-    messageEl.textContent = state.feedback === 'wrong'
-      ? 'Не та клетка — попробуй ещё.'
-      : 'Печатай координату подсвеченной клетки.';
+    messageEl.textContent = state.feedback === 'wrong' ? t('msgWrong') : t('msgTargeting');
   }
 }
 
@@ -115,7 +193,6 @@ function tick() {
 }
 
 function begin() {
-  // Прячем модалку
   if (modalEl) {
     modalEl.classList.add('hidden');
     modalEl.setAttribute('aria-hidden', 'true');
@@ -128,7 +205,7 @@ function begin() {
   answerInput.disabled = false;
   answerInput.focus();
   startButton.disabled = true;
-  startButton.textContent = 'Идёт игра…';
+  startButton.textContent = t('playingBtn');
   if (timerId) clearInterval(timerId);
   timerId = setInterval(tick, 100);
   render();
@@ -139,15 +216,12 @@ function setOrientation(value) {
   colorButtons.forEach(btn => {
     btn.classList.toggle('active', btn.dataset.color === value);
   });
-  // Перестраиваем доску с новой ориентацией сразу (кроме Random — там на старте)
   if (value !== 'random') {
     buildBoard(value);
-    // Сбрасываем подсветку цели если не в игре
     if (!state.running) {
       document.querySelectorAll('.square').forEach(sq => sq.classList.remove('target'));
     }
   } else {
-    // Random — показываем нейтрально (белые)
     buildBoard('white');
   }
 }
@@ -158,7 +232,6 @@ if (isBrowser) {
     state = applyAnswer(state, answerInput.value);
     answerInput.value = state.typed;
 
-    // Random mode: переворачиваем доску после каждого правильного ответа
     if (state.feedback === 'correct' && orientationSetting === 'random') {
       const newOrient = resolveOrientation();
       buildBoard(newOrient);
@@ -180,6 +253,23 @@ if (isBrowser) {
     modalBtn.addEventListener('click', begin);
   }
 
+  langButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      lang = btn.dataset.lang;
+      applyLanguage();
+      // Re-render dynamic text in the running state
+      if (state.running) {
+        messageEl.textContent = state.feedback === 'wrong' ? t('msgWrong') : t('msgTargeting');
+        startButton.textContent = t('playingBtn');
+      } else if (state.startedAt) {
+        startButton.textContent = t('againBtn');
+      } else {
+        startButton.textContent = t('startBtn');
+      }
+    });
+  });
+
+  applyLanguage();
   buildBoard('white');
   render();
 }

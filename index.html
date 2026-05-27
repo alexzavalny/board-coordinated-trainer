@@ -1,54 +1,59 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Board Coordinates Trainer</title>
+  <title data-i18n="pageTitle">Board Coordinates Trainer</title>
   <link rel="stylesheet" href="styles.css?v=df0506d" />
 </head>
 <body>
   <main class="app">
     <section class="hero">
-      <p class="eyebrow">Chess trainer</p>
-      <h1>Тренажёр координат доски</h1>
-      <p class="lead">За минуту набери как можно больше координат подсвеченных клеток.</p>
+      <div class="lang-switch">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <span class="lang-divider">|</span>
+        <button class="lang-btn" data-lang="ru">RU</button>
+      </div>
+      <p class="eyebrow" data-i18n="eyebrow">Chess trainer</p>
+      <h1 data-i18n="title">Board Coordinates Trainer</h1>
+      <p class="lead" data-i18n="lead">Score as many coordinates as you can in one minute.</p>
     </section>
 
-    <section class="game-panel" aria-label="Тренажёр">
+    <section class="game-panel" aria-label="Trainer">
       <div class="stats" aria-live="polite">
         <div class="stat">
-          <span class="stat-label">Время</span>
+          <span class="stat-label" data-i18n="statTime">Time</span>
           <strong id="timer">60</strong>
         </div>
         <div class="stat">
-          <span class="stat-label">Очки</span>
+          <span class="stat-label" data-i18n="statScore">Score</span>
           <strong id="score">0</strong>
         </div>
         <div class="stat wide">
-          <span class="stat-label">Ввод</span>
+          <span class="stat-label" data-i18n="statInput">Input</span>
           <strong id="typed" class="typed">—</strong>
         </div>
       </div>
 
       <div class="game-main">
         <div class="board-wrap">
-          <div id="board" class="board" aria-label="Шахматная доска"></div>
+          <div id="board" class="board" aria-label="Chess board"></div>
         </div>
 
         <div class="side-panel">
-          <div id="message" class="message">Нажми «Старт», затем печатай координату подсвеченной клетки.</div>
+          <div id="message" class="message" data-i18n="msgReady">Press «Start», then type the coordinate of the highlighted square.</div>
 
           <div class="controls">
             <div class="color-selector">
-              <span class="color-label">Цвет:</span>
-              <div class="color-buttons" role="radiogroup" aria-label="Цвет фигур">
-                <button class="color-btn active" data-color="white">♔ Белые</button>
-                <button class="color-btn" data-color="black">♚ Чёрные</button>
-                <button class="color-btn" data-color="random">🎲 Рандом</button>
+              <span class="color-label" data-i18n="colorLabel">Color:</span>
+              <div class="color-buttons" role="radiogroup" aria-label="Side selection">
+                <button class="color-btn active" data-color="white" data-i18n="colorWhite">White</button>
+                <button class="color-btn" data-color="black" data-i18n="colorBlack">Black</button>
+                <button class="color-btn" data-color="random" data-i18n="colorRandom">Random</button>
               </div>
             </div>
-            <button id="startButton" type="button">Старт</button>
-            <input id="answerInput" type="text" inputmode="text" autocomplete="off" spellcheck="false" maxlength="2" aria-label="Введите координату" placeholder="e4" disabled />
+            <button id="startButton" type="button" data-i18n="startBtn">Start</button>
+            <input id="answerInput" type="text" inputmode="text" autocomplete="off" spellcheck="false" maxlength="2" aria-label="Enter coordinate" placeholder="e4" />
           </div>
         </div>
       </div>
@@ -58,18 +63,18 @@
   <div id="resultModal" class="modal-overlay hidden" aria-hidden="true">
     <div class="modal-card">
       <div class="modal-icon" id="modalIcon">♔</div>
-      <h2 class="modal-title">Время вышло!</h2>
+      <h2 class="modal-title" data-i18n="modalTitle">Time's up!</h2>
       <div class="modal-stats">
         <div class="modal-stat">
-          <span class="modal-stat-label">Режим</span>
+          <span class="modal-stat-label" data-i18n="modalMode">Mode</span>
           <span class="modal-stat-value" id="modalMode">—</span>
         </div>
         <div class="modal-stat">
-          <span class="modal-stat-label">Очки</span>
+          <span class="modal-stat-label" data-i18n="modalScore">Score</span>
           <span class="modal-stat-value modal-score" id="modalScore">0</span>
         </div>
       </div>
-      <button class="modal-btn" id="modalPlayAgain">Ещё раз</button>
+      <button class="modal-btn" id="modalPlayAgain" data-i18n="againBtn">Play again</button>
     </div>
   </div>
 
