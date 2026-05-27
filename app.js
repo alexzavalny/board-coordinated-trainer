@@ -19,7 +19,6 @@ export function createSquareElement(documentRef, file, rank) {
 
 const isBrowser = typeof document !== 'undefined';
 const boardEl = isBrowser ? document.querySelector('#board') : null;
-const boardWrap = isBrowser ? document.querySelector('.board-wrap') : null;
 const timerEl = isBrowser ? document.querySelector('#timer') : null;
 const scoreEl = isBrowser ? document.querySelector('#score') : null;
 const typedEl = isBrowser ? document.querySelector('#typed') : null;
@@ -64,7 +63,7 @@ function render() {
   });
 
   if (!state.running && state.startedAt) {
-    const orientLabel = state.orientation === 'black' ? 'за чёрных' : 'за белых';
+    const orientLabel = state.orientation === 'black' ? ' за чёрных' : ' за белых';
     messageEl.textContent = `Время вышло! Играл${orientLabel}. Результат: ${state.score}. Нажми «Старт» снова.`;
     answerInput.disabled = true;
     startButton.disabled = false;

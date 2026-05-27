@@ -59,7 +59,7 @@ export function startGame(state = createGameState(), now = Date.now()) {
     score: 0,
     typed: '',
     feedback: null,
-    currentTarget: state.cells[0],
+    currentTarget: nextTarget(state.cells),
     startedAt: now,
     endsAt: now + state.durationSeconds * 1000,
     timeLeft: state.durationSeconds,

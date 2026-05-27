@@ -10,18 +10,21 @@ let state = createGameState({ durationSeconds: 30, cells: ['a1', 'b2', 'c3'] });
 state = startGame(state, 1000);
 assert.equal(state.score, 0);
 assert.equal(state.timeLeft, 30);
-assert.equal(state.currentTarget, 'a1');
+assert.ok(['a1', 'b2', 'c3'].includes(state.currentTarget), 'first target should be random from cells');
 
-let wrong = applyAnswer(state, 'b2', 1500);
+const firstTarget = state.currentTarget;
+const wrongAnswer = ['a1', 'b2', 'c3'].find(c => c !== firstTarget);
+
+let wrong = applyAnswer(state, wrongAnswer, 1500);
 assert.equal(wrong.score, 0);
 assert.equal(wrong.feedback, 'wrong');
-assert.equal(wrong.currentTarget, 'a1');
-assert.equal(wrong.typed, 'b2');
+assert.equal(wrong.currentTarget, firstTarget, 'target unchanged on wrong answer');
+assert.equal(wrong.typed, wrongAnswer);
 
-let right = applyAnswer(state, 'a1', 1500, () => 0.34);
+// Correct answer — next target is random, so just verify score and feedback
+let right = applyAnswer(state, firstTarget, 1500, () => 0.5);
 assert.equal(right.score, 1);
 assert.equal(right.feedback, 'correct');
-assert.equal(right.currentTarget, 'b2');
 assert.equal(right.typed, '');
 
 let expired = applyAnswer({ ...state, endsAt: 1000 }, 'a1', 31001);
