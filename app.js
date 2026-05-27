@@ -19,6 +19,7 @@ export function createSquareElement(documentRef, file, rank) {
 
 const isBrowser = typeof document !== 'undefined';
 const boardEl = isBrowser ? document.querySelector('#board') : null;
+const boardWrap = isBrowser ? document.querySelector('.board-wrap') : null;
 const timerEl = isBrowser ? document.querySelector('#timer') : null;
 const scoreEl = isBrowser ? document.querySelector('#score') : null;
 const typedEl = isBrowser ? document.querySelector('#typed') : null;
@@ -48,6 +49,7 @@ function buildBoard(orientation) {
     });
   });
   boardEl.dataset.orientation = orientation;
+  if (boardWrap) boardWrap.dataset.orientation = orientation;
 }
 
 function render() {

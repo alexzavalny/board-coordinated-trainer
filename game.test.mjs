@@ -21,8 +21,8 @@ assert.equal(wrong.feedback, 'wrong');
 assert.equal(wrong.currentTarget, firstTarget, 'target unchanged on wrong answer');
 assert.equal(wrong.typed, wrongAnswer);
 
-// Correct answer — next target is random, so just verify score and feedback
-let right = applyAnswer(state, firstTarget, 1500, () => 0.5);
+// Correct answer — next target is random, so use real random and just verify score/feedback
+let right = applyAnswer(state, firstTarget, 1500);
 assert.equal(right.score, 1);
 assert.equal(right.feedback, 'correct');
 assert.equal(right.typed, '');
