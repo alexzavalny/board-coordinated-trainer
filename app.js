@@ -26,6 +26,7 @@ const i18n = {
     modalScore: 'Score',
     modeWhite: 'As White',
     modeBlack: 'As Black',
+    modeRandom: 'Random',
   },
   ru: {
     pageTitle: 'Тренажёр координат доски',
@@ -51,6 +52,7 @@ const i18n = {
     modalScore: 'Очки',
     modeWhite: 'За белых',
     modeBlack: 'За чёрных',
+    modeRandom: 'Рандом',
   },
 };
 
@@ -171,6 +173,11 @@ function buildBoard(orientation) {
   placeKing('e8', 'king-b.svg');
 }
 
+function getModeLabel() {
+  if (orientationSetting === 'random') return t('modeRandom');
+  return state.orientation === 'black' ? t('modeBlack') : t('modeWhite');
+}
+
 function render() {
   timerEl.textContent = state.timeLeft;
   scoreEl.textContent = state.score;
@@ -186,7 +193,7 @@ function render() {
   if (!state.running && state.startedAt) {
     const isBlack = state.orientation === 'black';
     if (modalIcon) modalIcon.textContent = isBlack ? '♚' : '♔';
-    if (modalMode) modalMode.textContent = isBlack ? t('modeBlack') : t('modeWhite');
+    if (modalMode) modalMode.textContent = getModeLabel();
     if (modalScore) modalScore.textContent = state.score;
     if (modalEl && !resultModalDismissed) {
       modalEl.classList.remove('hidden');
@@ -293,6 +300,7 @@ if (isBrowser) {
         startButton.textContent = t('playingBtn');
       } else if (state.startedAt) {
         startButton.textContent = t('againBtn');
+        if (modalMode) modalMode.textContent = getModeLabel();
       } else {
         startButton.textContent = t('startBtn');
       }
