@@ -52,17 +52,19 @@ function buildBoard(orientation) {
   if (boardWrap) boardWrap.dataset.orientation = orientation;
 
   // Ставим королей на законные места
-  const placeKing = (coord, symbol) => {
+  const placeKing = (coord, src) => {
     const sq = boardEl.querySelector(`[data-coord="${coord}"]`);
     if (!sq) return;
     sq.querySelector('.king')?.remove();
-    const el = document.createElement('span');
+    const el = document.createElement('img');
     el.className = 'king';
-    el.textContent = symbol;
+    el.src = src;
+    el.alt = '';
+    el.draggable = false;
     sq.append(el);
   };
-  placeKing('e1', '♔');
-  placeKing('e8', '♚');
+  placeKing('e1', 'king-w.svg');
+  placeKing('e8', 'king-b.svg');
 }
 
 function render() {
