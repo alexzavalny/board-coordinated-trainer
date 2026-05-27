@@ -19,23 +19,36 @@ export function createSquareElement(documentRef, file, rank) {
 
 const isBrowser = typeof document !== 'undefined';
 const boardEl = isBrowser ? document.querySelector('#board') : null;
+const boardWrap = isBrowser ? document.querySelector('.board-wrap') : null;
 const timerEl = isBrowser ? document.querySelector('#timer') : null;
 const scoreEl = isBrowser ? document.querySelector('#score') : null;
 const typedEl = isBrowser ? document.querySelector('#typed') : null;
 const messageEl = isBrowser ? document.querySelector('#message') : null;
 const startButton = isBrowser ? document.querySelector('#startButton') : null;
 const answerInput = isBrowser ? document.querySelector('#answerInput') : null;
+const colorButtons = isBrowser ? document.querySelectorAll('.color-btn') : null;
 
 let state = createGameState({ durationSeconds: 30, cells: ALL_CELLS });
 let timerId = null;
+let orientationSetting = 'white'; // 'white' | 'black' | 'random'
 
-function buildBoard() {
+function resolveOrientation() {
+  if (orientationSetting === 'random') {
+    return Math.random() < 0.5 ? 'white' : 'black';
+  }
+  return orientationSetting;
+}
+
+function buildBoard(orientation) {
   boardEl.innerHTML = '';
-  [...RANKS].reverse().forEach(rank => {
-    FILES.forEach(file => {
+  const ranks = orientation === 'white' ? [...RANKS].reverse() : RANKS;       // white: 8→1, black: 1→8
+  const files = orientation === 'white' ? FILES : [...FILES].reverse();       // white: a→h, black: h→a
+  ranks.forEach(rank => {
+    files.forEach(file => {
       boardEl.append(createSquareElement(document, file, rank));
     });
   });
+  boardEl.dataset.orientation = orientation;
 }
 
 function render() {
@@ -51,7 +64,8 @@ function render() {
   });
 
   if (!state.running && state.startedAt) {
-    messageEl.textContent = `Время вышло. Результат: ${state.score}. Нажми «Старт», чтобы сыграть ещё раз.`;
+    const orientLabel = state.orientation === 'black' ? 'за чёрных' : 'за белых';
+    messageEl.textContent = `Время вышло! Играл${orientLabel}. Результат: ${state.score}. Нажми «Старт» снова.`;
     answerInput.disabled = true;
     startButton.disabled = false;
     startButton.textContent = 'Ещё раз';
@@ -72,7 +86,10 @@ function tick() {
 }
 
 function begin() {
-  state = startGame(createGameState({ durationSeconds: 30, cells: ALL_CELLS }));
+  const orientation = resolveOrientation();
+  buildBoard(orientation);
+  state = startGame(createGameState({ durationSeconds: 30, cells: ALL_CELLS }), Date.now());
+  state = { ...state, orientation };
   answerInput.value = '';
   answerInput.disabled = false;
   answerInput.focus();
@@ -81,6 +98,24 @@ function begin() {
   if (timerId) clearInterval(timerId);
   timerId = setInterval(tick, 100);
   render();
+}
+
+function setOrientation(value) {
+  orientationSetting = value;
+  colorButtons.forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.color === value);
+  });
+  // Перестраиваем доску с новой ориентацией сразу (кроме Random — там на старте)
+  if (value !== 'random') {
+    buildBoard(value);
+    // Сбрасываем подсветку цели если не в игре
+    if (!state.running) {
+      document.querySelectorAll('.square').forEach(sq => sq.classList.remove('target'));
+    }
+  } else {
+    // Random — показываем нейтрально (белые)
+    buildBoard('white');
+  }
 }
 
 if (isBrowser) {
@@ -95,6 +130,10 @@ if (isBrowser) {
     if (event.key === 'Enter' && !state.running) begin();
   });
 
-  buildBoard();
+  colorButtons.forEach(btn => {
+    btn.addEventListener('click', () => setOrientation(btn.dataset.color));
+  });
+
+  buildBoard('white');
   render();
 }

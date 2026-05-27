@@ -173,6 +173,49 @@ h1 {
   flex-wrap: wrap;
 }
 
+.color-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-label {
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.color-buttons {
+  display: flex;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.color-btn {
+  all: unset;
+  cursor: pointer;
+  padding: 5px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  transition: background 120ms, color 120ms;
+  line-height: 1.4;
+}
+
+.color-btn.active {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text);
+}
+
+.color-btn:hover:not(.active) {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+}
+
 button,
 input {
   height: 54px;
@@ -296,5 +339,15 @@ input:focus {
   input {
     width: 92px;
     font-size: 24px;
+  }
+
+  .color-selector {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .color-btn {
+    padding: 4px 10px;
+    font-size: 13px;
   }
 }

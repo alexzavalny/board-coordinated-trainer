@@ -34,9 +34,17 @@
         <div id="board" class="board" aria-label="Шахматная доска"></div>
       </div>
 
-      <div id="message" class="message">Нажми «Старт», затем печатай координату клетки: например, e4.</div>
+      <div id="message" class="message">Нажми «Старт», затем печатай координату подсвеченной клетки.</div>
 
       <div class="controls">
+        <div class="color-selector">
+          <span class="color-label">Цвет:</span>
+          <div class="color-buttons" role="radiogroup" aria-label="Цвет фигур">
+            <button class="color-btn active" data-color="white">♔ Белые</button>
+            <button class="color-btn" data-color="black">♚ Чёрные</button>
+            <button class="color-btn" data-color="random">🎲 Рандом</button>
+          </div>
+        </div>
         <button id="startButton" type="button">Старт</button>
         <input id="answerInput" type="text" inputmode="text" autocomplete="off" spellcheck="false" maxlength="2" aria-label="Введите координату" placeholder="e4" disabled />
       </div>
