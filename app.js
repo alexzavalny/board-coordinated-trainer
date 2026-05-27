@@ -50,6 +50,19 @@ function buildBoard(orientation) {
   });
   boardEl.dataset.orientation = orientation;
   if (boardWrap) boardWrap.dataset.orientation = orientation;
+
+  // Ставим королей на законные места
+  const placeKing = (coord, symbol) => {
+    const sq = boardEl.querySelector(`[data-coord="${coord}"]`);
+    if (!sq) return;
+    sq.querySelector('.king')?.remove();
+    const el = document.createElement('span');
+    el.className = 'king';
+    el.textContent = symbol;
+    sq.append(el);
+  };
+  placeKing('e1', '♔');
+  placeKing('e8', '♚');
 }
 
 function render() {
