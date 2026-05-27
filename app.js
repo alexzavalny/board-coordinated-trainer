@@ -17,6 +17,7 @@ const i18n = {
     startBtn: 'Start',
     playingBtn: 'Playing…',
     againBtn: 'Play again',
+    closeBtn: 'Close',
     msgReady: 'Press «Start», then type the coordinate of the highlighted square.',
     msgWrong: 'Wrong square — try again.',
     msgTargeting: 'Type the coordinate of the highlighted square.',
@@ -41,6 +42,7 @@ const i18n = {
     startBtn: 'Старт',
     playingBtn: 'Идёт игра…',
     againBtn: 'Ещё раз',
+    closeBtn: 'Закрыть',
     msgReady: 'Нажми «Старт», затем печатай координату подсвеченной клетки.',
     msgWrong: 'Не та клетка — попробуй ещё.',
     msgTargeting: 'Печатай координату подсвеченной клетки.',
@@ -65,6 +67,12 @@ function applyLanguage() {
       } else {
         el.textContent = dict[key];
       }
+    }
+  });
+  document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
+    const key = el.dataset.i18nAriaLabel;
+    if (dict[key] !== undefined) {
+      el.setAttribute('aria-label', dict[key]);
     }
   });
   // Update lang switch buttons
@@ -113,10 +121,20 @@ const modalIcon = isBrowser ? document.querySelector('#modalIcon') : null;
 const modalMode = isBrowser ? document.querySelector('#modalMode') : null;
 const modalScore = isBrowser ? document.querySelector('#modalScore') : null;
 const modalBtn = isBrowser ? document.querySelector('#modalPlayAgain') : null;
+const modalClose = isBrowser ? document.querySelector('#modalClose') : null;
 
 let state = createGameState({ durationSeconds: 60, cells: ALL_CELLS });
 let timerId = null;
 let orientationSetting = 'white'; // 'white' | 'black' | 'random'
+let resultModalDismissed = false;
+
+function hideResultModal() {
+  resultModalDismissed = true;
+  if (modalEl) {
+    modalEl.classList.add('hidden');
+    modalEl.setAttribute('aria-hidden', 'true');
+  }
+}
 
 function resolveOrientation() {
   if (orientationSetting === 'random') {
@@ -170,7 +188,7 @@ function render() {
     if (modalIcon) modalIcon.textContent = isBlack ? '♚' : '♔';
     if (modalMode) modalMode.textContent = isBlack ? t('modeBlack') : t('modeWhite');
     if (modalScore) modalScore.textContent = state.score;
-    if (modalEl) {
+    if (modalEl && !resultModalDismissed) {
       modalEl.classList.remove('hidden');
       modalEl.setAttribute('aria-hidden', 'false');
     }
@@ -193,10 +211,8 @@ function tick() {
 }
 
 function begin() {
-  if (modalEl) {
-    modalEl.classList.add('hidden');
-    modalEl.setAttribute('aria-hidden', 'true');
-  }
+  hideResultModal();
+  resultModalDismissed = false;
   const orientation = resolveOrientation();
   buildBoard(orientation);
   state = startGame(createGameState({ durationSeconds: 60, cells: ALL_CELLS }), Date.now());
@@ -242,6 +258,10 @@ if (isBrowser) {
   });
 
   document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && modalEl && !modalEl.classList.contains('hidden')) {
+      hideResultModal();
+      return;
+    }
     if (event.key === 'Enter' && !state.running) begin();
   });
 
@@ -251,6 +271,16 @@ if (isBrowser) {
 
   if (modalBtn) {
     modalBtn.addEventListener('click', begin);
+  }
+
+  if (modalClose) {
+    modalClose.addEventListener('click', hideResultModal);
+  }
+
+  if (modalEl) {
+    modalEl.addEventListener('click', event => {
+      if (event.target === modalEl) hideResultModal();
+    });
   }
 
   langButtons.forEach(btn => {

@@ -351,6 +351,7 @@ input:focus {
 }
 
 .modal-card {
+  position: relative;
   width: min(420px, 100%);
   display: grid;
   gap: 18px;
@@ -367,6 +368,32 @@ input:focus {
 @keyframes modalPop {
   0% { transform: scale(0.85); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
+}
+
+.modal-close {
+  all: unset;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 120ms, background 120ms, transform 120ms;
+}
+
+.modal-close:hover,
+.modal-close:focus-visible {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.14);
+  transform: scale(1.04);
 }
 
 .modal-icon {
