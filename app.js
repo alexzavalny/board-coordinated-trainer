@@ -27,6 +27,11 @@ const messageEl = isBrowser ? document.querySelector('#message') : null;
 const startButton = isBrowser ? document.querySelector('#startButton') : null;
 const answerInput = isBrowser ? document.querySelector('#answerInput') : null;
 const colorButtons = isBrowser ? document.querySelectorAll('.color-btn') : null;
+const modalEl = isBrowser ? document.querySelector('#resultModal') : null;
+const modalIcon = isBrowser ? document.querySelector('#modalIcon') : null;
+const modalMode = isBrowser ? document.querySelector('#modalMode') : null;
+const modalScore = isBrowser ? document.querySelector('#modalScore') : null;
+const modalBtn = isBrowser ? document.querySelector('#modalPlayAgain') : null;
 
 let state = createGameState({ durationSeconds: 60, cells: ALL_CELLS });
 let timerId = null;
@@ -80,8 +85,16 @@ function render() {
   });
 
   if (!state.running && state.startedAt) {
-    const orientLabel = state.orientation === 'black' ? ' за чёрных' : ' за белых';
-    messageEl.textContent = `Время вышло! Играл${orientLabel}. Результат: ${state.score}. Нажми «Старт» снова.`;
+    // Показываем модалку с результатом
+    const isBlack = state.orientation === 'black';
+    if (modalIcon) modalIcon.textContent = isBlack ? '♚' : '♔';
+    if (modalMode) modalMode.textContent = isBlack ? 'За чёрных' : 'За белых';
+    if (modalScore) modalScore.textContent = state.score;
+    if (modalEl) {
+      modalEl.classList.remove('hidden');
+      modalEl.setAttribute('aria-hidden', 'false');
+    }
+    messageEl.textContent = '';
     answerInput.disabled = true;
     startButton.disabled = false;
     startButton.textContent = 'Ещё раз';
@@ -102,6 +115,11 @@ function tick() {
 }
 
 function begin() {
+  // Прячем модалку
+  if (modalEl) {
+    modalEl.classList.add('hidden');
+    modalEl.setAttribute('aria-hidden', 'true');
+  }
   const orientation = resolveOrientation();
   buildBoard(orientation);
   state = startGame(createGameState({ durationSeconds: 60, cells: ALL_CELLS }), Date.now());
@@ -157,6 +175,10 @@ if (isBrowser) {
   colorButtons.forEach(btn => {
     btn.addEventListener('click', () => setOrientation(btn.dataset.color));
   });
+
+  if (modalBtn) {
+    modalBtn.addEventListener('click', begin);
+  }
 
   buildBoard('white');
   render();

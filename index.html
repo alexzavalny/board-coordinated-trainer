@@ -55,6 +55,24 @@
     </section>
   </main>
 
+  <div id="resultModal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-icon" id="modalIcon">♔</div>
+      <h2 class="modal-title">Время вышло!</h2>
+      <div class="modal-stats">
+        <div class="modal-stat">
+          <span class="modal-stat-label">Режим</span>
+          <span class="modal-stat-value" id="modalMode">—</span>
+        </div>
+        <div class="modal-stat">
+          <span class="modal-stat-label">Очки</span>
+          <span class="modal-stat-value modal-score" id="modalScore">0</span>
+        </div>
+      </div>
+      <button class="modal-btn" id="modalPlayAgain">Ещё раз</button>
+    </div>
+  </div>
+
   <script type="module" src="app.js?v=18a17b7"></script>
 </body>
 </html>
